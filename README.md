@@ -10,7 +10,7 @@ Surf forecaster and spot ratings application.
 
 ### dependencies (after starting venv)
 - to install dependecies: `pip install -r requirements.txt`
-- to write / update requirements file: `pip freeze > requirement.txt`
+- to write / update requirements file: `pip freeze > requirements.txt`
 - check all python packages installed: `pip list`
 
 ### frontend
