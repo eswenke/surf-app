@@ -1,25 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './styles/global.css';
+
+// Pages
+import Home from './pages/Home';
+import Map from './pages/Map';
+import SavedSpots from './pages/SavedSpots';
+import SpotDetails from './pages/SpotDetails';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Hello World!
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/map" element={<Map />} />
+        <Route path="/saved" element={<SavedSpots />} />
+        <Route path="/spot/:id" element={<SpotDetails />} />
+      </Routes>
+    </Router>
   );
 }
 
