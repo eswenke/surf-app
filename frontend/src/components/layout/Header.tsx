@@ -20,6 +20,8 @@ const Logo = styled(Link)`
 const NavLinks = styled.div`
   display: flex;
   gap: 2rem;
+  margin-left: auto;
+  margin-right: 2rem;
 `;
 
 const NavLink = styled(Link)`
@@ -56,7 +58,7 @@ const Header: React.FC = () => {
         <NavLink to="/saved">Saved Spots</NavLink>
         <NavLink to="/map">Map</NavLink>
       </NavLinks>
-      
+
       <ProfileIcon to="/profile">
         <i className="fa fa-user"></i>
       </ProfileIcon>
