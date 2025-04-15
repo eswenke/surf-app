@@ -25,6 +25,7 @@
 1. plan out some bare initial table schemas, put in one table
 2. test query for 1 table to confirm working connection
 3. figure out auth for login / password pages
+  a. check out Auth0? ask Lucas
 
 ## general
 1. redo npm / webpack for updated packages and increased performance (includes deleting package-lock.json, node modules, and reinstalling properly)
@@ -33,3 +34,4 @@
 4. figure out hosting
 5. figure out how to grab forecast data necessary to make decently accurate forecasts
 6. figure out testing throughout
+7. github vulnerabilities?
