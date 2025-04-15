@@ -26,10 +26,6 @@ def read_root():
 # engine = create_engine(DATABASE_URL, echo=True)
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# # Create engine and session
-# engine = create_engine(DATABASE_URL, echo=True)
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 # @app.get("/forecast/{spot_id}")
 # async def get_forecast(spot_id: int):
 #     # Connect to database and fetch forecast
