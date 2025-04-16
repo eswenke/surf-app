@@ -6,7 +6,7 @@
   - link these pages to backend
   - implement proper auth
 - add map (mapbox, maplibre, openmaptiles for free map tiles)
-  - get a global map view that you can scroll / zoom 
+  - get a global map view that you can scroll / zoom
   - add spot markers w/popups displaying current size / quality
   - clicking spots takes a user to spot forecast page
 - add spot management pages
