@@ -1,30 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
-
-const MapContainer = styled.div`
-  height: 80vh;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const MapPlaceholder = styled.div`
-  text-align: center;
-  max-width: 600px;
-  padding: 2rem;
-`;
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const Map: React.FC = () => {
   return (
     <Layout>
-      <MapContainer>
-        <MapPlaceholder>
-          <h2>Interactive Surf Map</h2>
-          <p>This page will contain an interactive map of surf spots with real-time conditions.</p>
-          <p>Coming soon!</p>
-        </MapPlaceholder>
+      <MapContainer center={[51.505, -0.09]} zoom={2}>
+        <TileLayer
+          url="some sort of url, watch the youtube video or find the free api key if that doesnt work"
+        />
+        <Marker position={[51.5, -0.09]}>
+          <Popup>Example Marker</Popup>
+        </Marker>
       </MapContainer>
     </Layout>
   );

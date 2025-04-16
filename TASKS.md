@@ -1,37 +1,36 @@
 # Project Tasks
 
 ## frontend
-1. fix top bar spacing (all to the right? middle?)
-2. add profile sidebar
-3. add login / register
-  a. link these pages to backend
-  b. implement proper auth
-4. add map
-  a. get a global map view that you can scroll / zoom 
-  b. add spot markers w/popups displaying current size / quality
-  c. clicking spots takes a user to spot forecast page
-5. add spot management pages
-  a. add spot page
-  b. iterate on spot page structure, adding dummy graphs + info (d3js visuals)
-  b. add spot create (potentially add your own spots, do later)
-6. add spot review page
-  a. add spot review create
-  b. add spot review update
-  c. add spot review delete
-7. add wave outline to top bar
-8. add rotating surf pictures faded into main page background
+- add profile sidebar navlinks
+- add login / register
+  - link these pages to backend
+  - implement proper auth
+- add map (mapbox, maplibre, openmaptiles for free map tiles)
+  - get a global map view that you can scroll / zoom 
+  - add spot markers w/popups displaying current size / quality
+  - clicking spots takes a user to spot forecast page
+- add spot management pages
+  - add spot page
+  - iterate on spot page structure, adding dummy graphs + info (d3js visuals)
+  - add spot create (potentially add your own spots, do later)
+- add spot review page
+  - add spot review create
+  - add spot review update
+  - add spot review delete
+- add wave outline to top bar
+- add rotating surf pictures faded into main page background
 
 ## backend
-1. plan out some bare initial table schemas, put in one table
-2. test query for 1 table to confirm working connection
-3. figure out auth for login / password pages
-  a. check out Auth0? ask Lucas
+- plan out some bare initial table schemas, put in one table
+- test query for 1 table to confirm working connection
+- figure out auth for login / password pages
+  - check out Auth0? ask Lucas
 
 ## general
-1. redo npm / webpack for updated packages and increased performance (includes deleting package-lock.json, node modules, and reinstalling properly)
-2. figure out a new name, actually original
-3. figure out how spot unlock mechanism (geotags and such)
-4. figure out hosting
-5. figure out how to grab forecast data necessary to make decently accurate forecasts
-6. figure out testing throughout
-7. github vulnerabilities?
+- redo npm / webpack for updated packages and increased performance (includes deleting package-lock.json, node modules, and reinstalling properly)
+- figure out a new name, actually original
+- figure out how spot unlock mechanism (geotags and such)
+- figure out hosting
+- figure out how to grab forecast data necessary to make decently accurate forecasts
+- figure out testing throughout
+- github vulnerabilities?
