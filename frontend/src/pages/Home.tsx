@@ -12,7 +12,7 @@ const HeroSection = styled.section`
   justify-content: center;
   text-align: center;
   color: white;
-  min-height: 60vh;
+  min-height: 80vh;
 `;
 
 const HeroTitle = styled.h1`
@@ -63,10 +63,6 @@ const FeatureCard = styled.div`
   padding: 2rem;
   box-shadow: var(--box-shadow);
   transition: var(--transition);
-  
-  &:hover {
-    transform: translateY(-5px);
-  }
 `;
 
 const FeatureIcon = styled.div`

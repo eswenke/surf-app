@@ -3,9 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 
-# Database URL (MAYBE DONT INCLUDE THE PASSWORD IN THE CODEBASE)
-DATABASE_URL = "postgresql+asyncpg://surfuser:yourpassword@localhost/surfforecast"
-
 app = FastAPI()
 
 # Set CORS policy

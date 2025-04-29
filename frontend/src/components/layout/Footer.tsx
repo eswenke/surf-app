@@ -71,15 +71,15 @@ const Footer: React.FC = () => {
         
         <FooterSection>
           <FooterHeading>Resources</FooterHeading>
-          <FooterLink to="/about">About Us</FooterLink>
-          <FooterLink to="/faq">FAQ</FooterLink>
-          <FooterLink to="/contact">Contact</FooterLink>
+          <FooterLink to="/">About Us</FooterLink>
+          <FooterLink to="/">FAQ</FooterLink>
+          <FooterLink to="/">Contact</FooterLink>
         </FooterSection>
         
         <FooterSection>
           <FooterHeading>Legal</FooterHeading>
-          <FooterLink to="/terms">Terms of Service</FooterLink>
-          <FooterLink to="/privacy">Privacy Policy</FooterLink>
+          <FooterLink to="/">Terms of Service</FooterLink>
+          <FooterLink to="/">Privacy Policy</FooterLink>
         </FooterSection>
       </FooterContent>
       
