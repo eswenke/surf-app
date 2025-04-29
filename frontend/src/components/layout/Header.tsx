@@ -147,10 +147,6 @@ const Header: React.FC = () => {
           Profile
         </MenuOption>
         <MenuOption>
-          <FontAwesomeIcon icon={faWater} size="lg" />
-          My Surf Spots
-        </MenuOption>
-        <MenuOption>
           <FontAwesomeIcon icon={faGear} size="lg" />
           Settings
         </MenuOption>
