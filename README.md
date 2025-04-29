@@ -15,11 +15,11 @@ Surf forecaster and spot ratings application.
 - check all python packages installed: `pip list`
 
 ### frontend
-- to install dependencies for frontend: `npm install`
-- to start frontend: `npm start`
-- to build app for prod (NOT IN PROD YET): `npm run build`
-- to test frontend: `npm test`
-- check all node packages installed: `npm list`
+- to install dependencies for frontend: `pnpm install`
+- to start frontend: `pnpm start`
+- to build app for prod (NOT IN PROD YET): `pnpm build`
+- to test frontend: `pnpm test`
+- check all node packages installed: `pnpm list`
 
 ### backend
 - to setup backend (from root): `uvicorn backend.main:app --reload`
