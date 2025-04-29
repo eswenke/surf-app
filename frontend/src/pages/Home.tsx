@@ -36,7 +36,7 @@ const HeroSubtitle = styled.p`
 
 const FeaturesSection = styled.section`
   padding: 4rem 2rem;
-  background-color: white;
+  background-color: var(--light-background);
 `;
 
 const FeaturesContainer = styled.div`
@@ -58,7 +58,7 @@ const FeatureGrid = styled.div`
 `;
 
 const FeatureCard = styled.div`
-  background-color: var(--light-background);
+  background-color: white;
   border-radius: var(--border-radius);
   padding: 2rem;
   box-shadow: var(--box-shadow);
