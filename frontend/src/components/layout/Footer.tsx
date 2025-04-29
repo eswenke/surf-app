@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const FooterContainer = styled.footer`
   background-color: var(--dark-background);
   color: var(--light-text);
-  padding: 2rem;
+  padding: 1.5rem 2rem 1rem;
 `;
 
 const FooterContent = styled.div`
@@ -23,12 +23,12 @@ const FooterContent = styled.div`
 const FooterSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 `;
 
 const FooterHeading = styled.h3`
   font-size: 1.2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 `;
 
 const FooterLink = styled(Link)`
@@ -43,8 +43,8 @@ const FooterLink = styled(Link)`
 
 const Copyright = styled.div`
   text-align: center;
-  margin-top: 2rem;
-  padding-top: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.9rem;
   opacity: 0.7;
@@ -83,7 +83,7 @@ const Footer: React.FC = () => {
       </FooterContent>
       
       <Copyright>
-        © {currentYear} WaveFinder. All rights reserved.
+        &copy; {currentYear} WaveFinder. All rights reserved.
       </Copyright>
     </FooterContainer>
   );
