@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faGear, faSignOutAlt, faWater } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../context/AuthContext';
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -55,19 +56,62 @@ const SidePanel = styled.div<{ open: boolean }>`
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
-  height: 50vh;
+  width: 280px;
+  height: auto;
   background: white;
   box-shadow: -2px 0 8px rgba(0,0,0,0.1);
   transform: translateX(${props => (props.open ? '0' : '100%')});
   transition: transform 0.3s ease;
   z-index: 1000;
-  padding: 2rem 1rem;
-  border-bottom-left-radius: 2rem;
+  padding: 2rem 1.5rem;
+  border-bottom-left-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const MenuOption = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: var(--text-color);
+  
+  &:hover {
+    background-color: rgba(0, 112, 243, 0.1);
+    color: var(--primary-color);
+  }
+  
+  svg {
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+  }
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  background-color: #eaeaea;
+  margin: 0.5rem 0;
+`;
+
+const PanelHeader = styled.div`
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
 `;
 
 const Header: React.FC = () => {
   const [isSidePanelOpen, setIsSidePanelOpen] = React.useState(false);
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    // Auth state change will redirect to login
+  };
 
   return (
     <HeaderContainer>
@@ -97,10 +141,24 @@ const Header: React.FC = () => {
 
       {/* The side panel itself */}
       <SidePanel open={isSidePanelOpen}>
-        {/* Add your side panel content here */}
-        <div>User Profile Panel</div>
-        <div>Settings</div>
-        <div>Logout</div>
+        <PanelHeader>WaveFinder</PanelHeader>
+        <MenuOption>
+          <FontAwesomeIcon icon={faUser} size="lg" />
+          Profile
+        </MenuOption>
+        <MenuOption>
+          <FontAwesomeIcon icon={faWater} size="lg" />
+          My Surf Spots
+        </MenuOption>
+        <MenuOption>
+          <FontAwesomeIcon icon={faGear} size="lg" />
+          Settings
+        </MenuOption>
+        <Divider />
+        <MenuOption onClick={handleLogout}>
+          <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
+          Logout
+        </MenuOption>
       </SidePanel>
 
     </HeaderContainer>
