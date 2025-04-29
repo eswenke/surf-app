@@ -12,7 +12,7 @@ const HeroSection = styled.section`
   justify-content: center;
   text-align: center;
   color: white;
-  min-height: 87vh;
+  min-height: 85vh;
 `;
 
 const HeroTitle = styled.h1`
