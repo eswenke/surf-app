@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 
 const SavedSpotsContainer = styled.div`
@@ -25,6 +26,7 @@ const SpotCard = styled.div`
   overflow: hidden;
   box-shadow: var(--box-shadow);
   transition: var(--transition);
+  cursor: pointer;
   
   &:hover {
     transform: translateY(-5px);
@@ -59,6 +61,8 @@ const SpotStats = styled.div`
 `;
 
 const SavedSpots: React.FC = () => {
+  const navigate = useNavigate();
+  
   // This would be fetched from an API in a real app
   const mockSavedSpots = [
     {
@@ -66,23 +70,45 @@ const SavedSpots: React.FC = () => {
       name: 'Malibu Beach',
       location: 'California, USA',
       rating: 4.5,
-      waveHeight: '3-4ft'
+      waveHeight: '3-4ft',
+      description: 'A world-famous right point break perfect for longboarding.',
+      forecast: [
+        { day: 'Today', waveHeight: '3-4ft', wind: '5mph' },
+        { day: 'Tomorrow', waveHeight: '2-3ft', wind: '8mph' },
+        { day: 'Wed', waveHeight: '4-5ft', wind: '3mph' }
+      ]
     },
     {
       id: 2,
       name: 'Pipeline',
       location: 'Oahu, Hawaii',
       rating: 5.0,
-      waveHeight: '6-8ft'
+      waveHeight: '6-8ft',
+      description: 'One of the most famous and dangerous waves in the world.',
+      forecast: [
+        { day: 'Today', waveHeight: '6-8ft', wind: '3mph' },
+        { day: 'Tomorrow', waveHeight: '7-9ft', wind: '4mph' },
+        { day: 'Wed', waveHeight: '5-7ft', wind: '6mph' }
+      ]
     },
     {
       id: 3,
       name: 'Bells Beach',
       location: 'Victoria, Australia',
       rating: 4.2,
-      waveHeight: '4-5ft'
+      waveHeight: '4-5ft',
+      description: 'Home to the world\'s longest-running surf competition.',
+      forecast: [
+        { day: 'Today', waveHeight: '4-5ft', wind: '7mph' },
+        { day: 'Tomorrow', waveHeight: '3-4ft', wind: '9mph' },
+        { day: 'Wed', waveHeight: '5-6ft', wind: '4mph' }
+      ]
     }
   ];
+  
+  const handleSpotClick = (spotId: number) => {
+    navigate(`/spot/${spotId}`);
+  };
   
   return (
     <Layout>
@@ -94,7 +120,10 @@ const SavedSpots: React.FC = () => {
         ) : (
           <SpotGrid>
             {mockSavedSpots.map(spot => (
-              <SpotCard key={spot.id}>
+              <SpotCard 
+                key={spot.id} 
+                onClick={() => handleSpotClick(spot.id)}
+              >
                 <SpotImage />
                 <SpotContent>
                   <SpotName>{spot.name}</SpotName>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
+import { useSpotData } from '../hooks/useSpotData';
 
 const SpotContainer = styled.div`
   max-width: 1200px;
@@ -108,37 +109,54 @@ const RatingsTitle = styled.h3`
   color: var(--primary-color);
 `;
 
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #e74c3c;
+`;
+
 const SpotDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { spot, loading, error } = useSpotData(id);
   
-  // In a real app, you would fetch spot details based on the ID
-  const spotDetails = {
-    id: id,
-    name: 'Malibu Beach',
-    location: 'California, USA',
-    rating: 4.5,
-    description: 'Malibu Beach is a world-famous surf spot known for its perfect right-hand point break. It offers consistent waves that are great for longboarding and is suitable for surfers of all levels.',
-    forecast: [
-      { day: 'Today', waveHeight: '3-4ft', wind: '5mph' },
-      { day: 'Tomorrow', waveHeight: '2-3ft', wind: '8mph' },
-      { day: 'Wed', waveHeight: '4-5ft', wind: '3mph' },
-      { day: 'Thu', waveHeight: '3-4ft', wind: '6mph' },
-      { day: 'Fri', waveHeight: '2-3ft', wind: '7mph' }
-    ]
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <LoadingMessage>Loading spot details...</LoadingMessage>
+      </Layout>
+    );
+  }
+  
+  if (error || !spot) {
+    return (
+      <Layout>
+        <ErrorMessage>
+          {error || 'Spot not found. Please try another spot.'}
+        </ErrorMessage>
+      </Layout>
+    );
+  }
   
   return (
     <Layout>
       <SpotContainer>
         <SpotHeader>
-          <SpotTitle>{spotDetails.name}</SpotTitle>
+          <SpotTitle>{spot.name}</SpotTitle>
           <SpotRating>
             <span>⭐</span>
-            <span>{spotDetails.rating}/5</span>
+            <span>{spot.rating}/5</span>
           </SpotRating>
         </SpotHeader>
         
-        <SpotLocation>{spotDetails.location}</SpotLocation>
+        <SpotLocation>{spot.location}</SpotLocation>
         
         <SpotContent>
           <div>
@@ -146,13 +164,13 @@ const SpotDetails: React.FC = () => {
             
             <SpotDescription>
               <h2>About this spot</h2>
-              <p>{spotDetails.description}</p>
+              <p>{spot.description}</p>
             </SpotDescription>
             
             <ForecastSection>
               <ForecastTitle>Forecast</ForecastTitle>
               <ForecastGrid>
-                {spotDetails.forecast.map((day, index) => (
+                {spot.forecast.map((day, index) => (
                   <ForecastCard key={index}>
                     <ForecastDay>{day.day}</ForecastDay>
                     <ForecastWave>{day.waveHeight}</ForecastWave>
