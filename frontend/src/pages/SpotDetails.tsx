@@ -102,12 +102,6 @@ const RatingsSection = styled.div`
   border-radius: var(--border-radius);
   padding: 1.5rem;
   box-shadow: var(--box-shadow);
-  cursor: pointer;
-  transition: transform 0.2s;
-  
-  &:hover {
-    transform: translateY(-3px);
-  }
 `;
 
 const RatingsTitle = styled.h3`
@@ -150,9 +144,16 @@ const StarsDisplay = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-const ViewAllLink = styled.span`
+const ViewAllLink = styled(Link)`
   font-size: 0.9rem;
   color: var(--primary-color);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const LoadingMessage = styled.div`
@@ -337,31 +338,29 @@ const SpotDetails: React.FC = () => {
           </div>
           
           <div>
-            <Link to={`/spot/${id}/reviews`} style={{ textDecoration: 'none' }}>
-              <RatingsSection>
-                <RatingsTitle>
-                  Ratings & Reviews
-                  <ViewAllLink>View all →</ViewAllLink>
-                </RatingsTitle>
-                
-                {mockReviews[Number(id)] && mockReviews[Number(id)].length > 0 ? (
-                  <div>
-                    {mockReviews[Number(id)].slice(0, 2).map(review => (
-                      <ReviewPreview key={review.id}>
-                        <ReviewerInfo>
-                          <ReviewerName>{review.reviewerName}</ReviewerName>
-                          <ReviewDate>{review.date}</ReviewDate>
-                        </ReviewerInfo>
-                        <StarsDisplay>{renderStars(review.rating)}</StarsDisplay>
-                        <p>{review.comment}</p>
-                      </ReviewPreview>
-                    ))}
-                  </div>
-                ) : (
-                  <p>No reviews yet for this spot. Be the first to leave a review!</p>
-                )}
-              </RatingsSection>
-            </Link>
+            <RatingsSection>
+              <RatingsTitle>
+                Ratings & Reviews
+                <ViewAllLink to={`/spot/${id}/reviews`}>View all →</ViewAllLink>
+              </RatingsTitle>
+              
+              {mockReviews[Number(id)] && mockReviews[Number(id)].length > 0 ? (
+                <div>
+                  {mockReviews[Number(id)].slice(0, 2).map(review => (
+                    <ReviewPreview key={review.id}>
+                      <ReviewerInfo>
+                        <ReviewerName>{review.reviewerName}</ReviewerName>
+                        <ReviewDate>{review.date}</ReviewDate>
+                      </ReviewerInfo>
+                      <StarsDisplay>{renderStars(review.rating)}</StarsDisplay>
+                      <p>{review.comment}</p>
+                    </ReviewPreview>
+                  ))}
+                </div>
+              ) : (
+                <p>No reviews yet for this spot. Be the first to leave a review!</p>
+              )}
+            </RatingsSection>
           </div>
         </SpotContent>
       </SpotContainer>

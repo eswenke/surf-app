@@ -5,6 +5,7 @@ import Layout from '../components/layout/Layout';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon, DivIcon } from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
+import Header from '../components/layout/Header';
 
 const Map: React.FC = () => {
   type MarkerType = {
@@ -14,16 +15,20 @@ const Map: React.FC = () => {
 
   const markers: MarkerType[] = [
     {
-      geocode: [51.51, -0.09],
-      popUp: "PopUp 1"
+      geocode: [35.2828, -120.6596],
+      popUp: "San Luis Obispo, CA"
     },
     {
-      geocode: [51.50, -0.09],
-      popUp: "PopUp 2"
+      geocode: [35.1428, -120.6413],
+      popUp: "Pismo Beach"
     },
     {
-      geocode: [51.505, -0.08],
-      popUp: "PopUp 3"
+      geocode: [35.3658, -120.8499],
+      popUp: "Morro Bay"
+    },
+    {
+      geocode: [35.1803, -120.7321],
+      popUp: "Avila Beach"
     }
   ];
 
@@ -32,17 +37,16 @@ const Map: React.FC = () => {
     iconSize: [25, 41], // size of icon
   });
 
-
-
   const createCustomClusterIcon = (cluster: any) => {
     return new DivIcon({
-      html: `<div class="cluster-icon">${cluster.getChildCount()})</div>`,
+      html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`,
       className: "custom marker cluster"
     });
   };
 
   return (
-    <Layout>
+    <>
+      <Header />
       <MapContainer center={[51.505, -0.09]} zoom={13}>
         {/* <TileLayer 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -66,7 +70,7 @@ const Map: React.FC = () => {
           }
         </MarkerClusterGroup>
       </MapContainer>
-    </Layout>
+    </>
   );
 };
 
