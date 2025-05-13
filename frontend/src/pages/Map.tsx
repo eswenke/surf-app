@@ -32,10 +32,6 @@ const MapWrapper = styled.div`
   overflow: hidden;
 `;
 
-const HeaderContainer = styled.div`
-  flex-shrink: 0;
-`;
-
 const StyledMapContainer = styled(MapContainer)`
   flex: 1;
   width: 100%;
@@ -99,6 +95,7 @@ const Map: React.FC = () => {
         <MarkerClusterGroup
           chunkedLoading
           iconCreateFunction={createCustomClusterIcon}
+          showCoverageOnHover={false}
         >
           {markers.map(marker => (
             <Marker position={marker.geocode} icon={customIcon}>

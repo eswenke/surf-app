@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faGear, faSignOutAlt, faWater } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faGear, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 
 const HeaderContainer = styled.header`

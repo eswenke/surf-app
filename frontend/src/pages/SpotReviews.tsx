@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
 import { useSpotData } from '../hooks/useSpotData';
+// import SurfboardScroller from '../components/common/SurfboardScroller';
 
 // Styled components
 const ReviewsContainer = styled.div`
@@ -303,6 +304,7 @@ const SpotReviews: React.FC = () => {
   return (
     <Layout>
       <ReviewsContainer>
+        {/* <SurfboardScroller scrollToTop={true} scrollToBottom={true} showAtHeight={200} /> */}
         <ReviewsHeader>
           <div>
             <BackLink to={`/spot/${id}`}>← Back to {spot.name}</BackLink>
