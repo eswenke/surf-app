@@ -7,11 +7,33 @@ import { Icon, DivIcon } from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import Header from '../components/layout/Header';
 
+// Apply these styles to the body element when the Map component mounts
+const applyGlobalStyles = () => {
+  document.body.style.overflow = 'hidden';
+  document.body.style.margin = '0';
+  document.body.style.height = '100vh';
+};
+
+// Reset the styles when the component unmounts
+const resetGlobalStyles = () => {
+  document.body.style.overflow = '';
+  document.body.style.margin = '';
+  document.body.style.height = '';
+};
+
 const MapWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
   overflow: hidden;
+`;
+
+const HeaderContainer = styled.div`
+  flex-shrink: 0;
 `;
 
 const StyledMapContainer = styled(MapContainer)`
@@ -21,6 +43,11 @@ const StyledMapContainer = styled(MapContainer)`
 `;
 
 const Map: React.FC = () => {
+  // Apply global styles when component mounts and clean up when it unmounts
+  React.useEffect(() => {
+    applyGlobalStyles();
+    return resetGlobalStyles;
+  }, []);
   type MarkerType = {
     geocode: [number, number];
     popUp: string;
@@ -59,7 +86,9 @@ const Map: React.FC = () => {
 
   return (
     <MapWrapper>
-      <Header />
+      <HeaderContainer>
+        <Header />
+      </HeaderContainer>
       <StyledMapContainer center={[35.2828, -120.6596]} zoom={13}>
         {/* <TileLayer 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
