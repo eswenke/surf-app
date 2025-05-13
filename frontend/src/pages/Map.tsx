@@ -1,11 +1,24 @@
 import 'leaflet/dist/leaflet.css'
 
 import React from 'react';
-import Layout from '../components/layout/Layout';
+import styled from 'styled-components';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon, DivIcon } from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import Header from '../components/layout/Header';
+
+const MapWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+`;
+
+const StyledMapContainer = styled(MapContainer)`
+  flex: 1;
+  width: 100%;
+  z-index: 0;
+`;
 
 const Map: React.FC = () => {
   type MarkerType = {
@@ -45,9 +58,9 @@ const Map: React.FC = () => {
   };
 
   return (
-    <>
+    <MapWrapper>
       <Header />
-      <MapContainer center={[51.505, -0.09]} zoom={13}>
+      <StyledMapContainer center={[35.2828, -120.6596]} zoom={13}>
         {/* <TileLayer 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -69,8 +82,8 @@ const Map: React.FC = () => {
             ))
           }
         </MarkerClusterGroup>
-      </MapContainer>
-    </>
+      </StyledMapContainer>
+    </MapWrapper>
   );
 };
 
