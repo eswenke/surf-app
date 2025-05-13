@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
 import { useSpotData } from '../hooks/useSpotData';
@@ -102,10 +102,56 @@ const RatingsSection = styled.div`
   border-radius: var(--border-radius);
   padding: 1.5rem;
   box-shadow: var(--box-shadow);
+  cursor: pointer;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: translateY(-3px);
+  }
 `;
 
 const RatingsTitle = styled.h3`
   margin-bottom: 1rem;
+  color: var(--primary-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ReviewPreview = styled.div`
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+`;
+
+const ReviewerInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+`;
+
+const ReviewerName = styled.span`
+  font-weight: bold;
+`;
+
+const ReviewDate = styled.span`
+  color: #666;
+`;
+
+const StarsDisplay = styled.div`
+  color: #f1c40f;
+  margin-bottom: 0.5rem;
+`;
+
+const ViewAllLink = styled.span`
+  font-size: 0.9rem;
   color: var(--primary-color);
 `;
 
@@ -123,9 +169,118 @@ const ErrorMessage = styled.div`
   color: #e74c3c;
 `;
 
+// Mock reviews data - in a real app, this would come from an API
+interface SurfConditions {
+  waveHeight: string;
+  wind: string;
+  weather: string;
+  crowdLevel: string;
+}
+
+interface Review {
+  id: number;
+  reviewerName: string;
+  date: string;
+  rating: number;
+  comment: string;
+  conditions: SurfConditions;
+}
+
+const mockReviews: Record<number, Review[]> = {
+  1: [ // Malibu Beach reviews
+    {
+      id: 101,
+      reviewerName: 'Sarah J.',
+      date: '2025-04-28',
+      rating: 5,
+      comment: 'Perfect day at Malibu! The waves were clean and consistent, great for longboarding.',
+      conditions: {
+        waveHeight: '3-4ft',
+        wind: 'Light offshore',
+        weather: 'Sunny',
+        crowdLevel: 'Moderate'
+      }
+    },
+    {
+      id: 102,
+      reviewerName: 'Mike T.',
+      date: '2025-04-15',
+      rating: 4,
+      comment: 'Good session today. Waves were a bit smaller than forecast but still fun.',
+      conditions: {
+        waveHeight: '2-3ft',
+        wind: 'Calm',
+        weather: 'Partly cloudy',
+        crowdLevel: 'Light'
+      }
+    }
+  ],
+  2: [ // Pipeline reviews
+    {
+      id: 201,
+      reviewerName: 'Jason K.',
+      date: '2025-05-01',
+      rating: 5,
+      comment: 'Epic day at Pipe! Solid 8ft barrels and only a few locals out.',
+      conditions: {
+        waveHeight: '6-8ft',
+        wind: 'Light offshore',
+        weather: 'Sunny',
+        crowdLevel: 'Light'
+      }
+    },
+    {
+      id: 202,
+      reviewerName: 'Kai L.',
+      date: '2025-04-22',
+      rating: 4,
+      comment: 'Pipe was firing today but super sketchy on the inside.',
+      conditions: {
+        waveHeight: '7-9ft',
+        wind: 'Offshore',
+        weather: 'Clear',
+        crowdLevel: 'Moderate'
+      }
+    }
+  ],
+  3: [ // Bells Beach reviews
+    {
+      id: 301,
+      reviewerName: 'Tom B.',
+      date: '2025-05-03',
+      rating: 5,
+      comment: 'Classic Bells today! Perfect right-handers with plenty of wall to work with.',
+      conditions: {
+        waveHeight: '4-5ft',
+        wind: 'Offshore',
+        weather: 'Clear',
+        crowdLevel: 'Moderate'
+      }
+    },
+    {
+      id: 302,
+      reviewerName: 'Mick F.',
+      date: '2025-04-25',
+      rating: 4,
+      comment: 'Good day at Bells but the wind picked up mid-session.',
+      conditions: {
+        waveHeight: '5-6ft',
+        wind: 'Light to moderate cross-shore',
+        weather: 'Partly cloudy',
+        crowdLevel: 'Moderate'
+      }
+    }
+  ]
+};
+
 const SpotDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { spot, loading, error } = useSpotData(id);
+  
+  // helper function to render stars
+  const renderStars = (rating: number) => {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  };
   
   if (loading) {
     return (
@@ -182,10 +337,31 @@ const SpotDetails: React.FC = () => {
           </div>
           
           <div>
-            <RatingsSection>
-              <RatingsTitle>Ratings & Reviews</RatingsTitle>
-              <p>This section will display user ratings and reviews for this surf spot.</p>
-            </RatingsSection>
+            <Link to={`/spot/${id}/reviews`} style={{ textDecoration: 'none' }}>
+              <RatingsSection>
+                <RatingsTitle>
+                  Ratings & Reviews
+                  <ViewAllLink>View all →</ViewAllLink>
+                </RatingsTitle>
+                
+                {mockReviews[Number(id)] && mockReviews[Number(id)].length > 0 ? (
+                  <div>
+                    {mockReviews[Number(id)].slice(0, 2).map(review => (
+                      <ReviewPreview key={review.id}>
+                        <ReviewerInfo>
+                          <ReviewerName>{review.reviewerName}</ReviewerName>
+                          <ReviewDate>{review.date}</ReviewDate>
+                        </ReviewerInfo>
+                        <StarsDisplay>{renderStars(review.rating)}</StarsDisplay>
+                        <p>{review.comment}</p>
+                      </ReviewPreview>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No reviews yet for this spot. Be the first to leave a review!</p>
+                )}
+              </RatingsSection>
+            </Link>
           </div>
         </SpotContent>
       </SpotContainer>
