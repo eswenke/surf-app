@@ -86,9 +86,7 @@ const Map: React.FC = () => {
 
   return (
     <MapWrapper>
-      <HeaderContainer>
-        <Header />
-      </HeaderContainer>
+      <Header />
       <StyledMapContainer center={[35.2828, -120.6596]} zoom={13}>
         {/* <TileLayer 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
