@@ -24,4 +24,5 @@ Surf forecaster and spot ratings application.
 ### backend
 - to setup backend (from root): `uvicorn backend.main:app --reload`
 - to setup backend (from backend folder): `uvicorn main:app --reload`
+- OR just run backend with `python run.py`
 
