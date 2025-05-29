@@ -14,6 +14,7 @@ if __name__=='__main__':
     num_hours_to_forecast = 24 # One day forecast. Change to 384 to get a 16 day forecast
     wave_grib_data = atlantic_wave_model.fetch_grib_datas(0, num_hours_to_forecast)
     raw_wave_data = atlantic_wave_model.parse_grib_datas(ri_wave_location, wave_grib_data)
+    
     if raw_wave_data:
         data = atlantic_wave_model.to_buoy_data(raw_wave_data)
     else:
@@ -37,11 +38,38 @@ if __name__=='__main__':
     summary = [x.wave_summary.wave_height for x in data]
     times = [x.date for x in data]
 
-    plt.plot(times, maxs, c='green')
-    plt.plot(times, mins, c='blue')
-    plt.plot(times, summary, c='red')
-    plt.xlabel('Hours')
+    # Create a figure with a specific size for better readability
+    plt.figure(figsize=(12, 6))
+    
+    # Plot the data
+    plt.plot(times, maxs, c='green', label='Maximum Breaking Height')
+    plt.plot(times, mins, c='blue', label='Minimum Breaking Height')
+    plt.plot(times, summary, c='red', label='Wave Height')
+    
+    # Format the x-axis dates
+    from matplotlib.dates import DateFormatter, HourLocator
+    ax = plt.gca()
+    
+    # Set major ticks every 6 hours
+    ax.xaxis.set_major_locator(HourLocator(interval=6))
+    
+    # Format the dates as 'MM/DD HH:MM'
+    date_format = DateFormatter('%m/%d\n%H:%M')
+    ax.xaxis.set_major_formatter(date_format)
+    
+    # Rotate the labels for better readability
+    plt.xticks(rotation=0)
+    
+    # Add labels and grid
+    plt.xlabel('Date and Time')
     plt.ylabel('Breaking Wave Height (ft)')
-    plt.grid(True)
+    plt.grid(True, alpha=0.3)
     plt.title('GFS Wave Atlantic: ' + atlantic_wave_model.latest_model_time().strftime('%d/%m/%Y %Hz'))
-    plt.show()
+    
+    # Add a legend
+    plt.legend(loc='best')
+    
+    # Save the plot to a file instead of displaying it
+    plt.savefig('wave_heights.png')
+    print(f"Plot saved to wave_heights.png")
+    plt.close()
