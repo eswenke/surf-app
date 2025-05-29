@@ -77,6 +77,7 @@ const ToggleButton = styled.button`
 const AuthForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -89,9 +90,16 @@ const AuthForm: React.FC = () => {
     setLoading(true);
 
     try {
+      // Validate username for signup
+      if (!isLogin && !username.trim()) {
+        setError('Username is required');
+        setLoading(false);
+        return;
+      }
+
       const { error } = isLogin 
         ? await signIn(email, password)
-        : await signUp(email, password);
+        : await signUp(email, password, username);
 
       if (error) {
         setError(error.message);
@@ -111,6 +119,15 @@ const AuthForm: React.FC = () => {
       <Form onSubmit={handleSubmit}>
         <Title>{isLogin ? 'Log In' : 'Sign Up'}</Title>
         {error && <ErrorMsg>{error}</ErrorMsg>}
+        {!isLogin && (
+          <Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            required
+          />
+        )}
         <Input
           type="email"
           placeholder="Email"

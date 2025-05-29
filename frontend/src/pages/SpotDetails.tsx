@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
 import { useSpotData } from '../hooks/useSpotData';
+import { useSpotReviews } from '../hooks/useSpotReviews';
 
 const SpotContainer = styled.div`
   max-width: 1200px;
@@ -170,113 +171,38 @@ const ErrorMessage = styled.div`
   color: #e74c3c;
 `;
 
-// Mock reviews data - in a real app, this would come from an API
-interface SurfConditions {
-  waveHeight: string;
-  wind: string;
-  weather: string;
-  crowdLevel: string;
-}
-
 interface Review {
   id: number;
-  reviewerName: string;
-  date: string;
+  user_id: string;
+  created_at: string;
   rating: number;
   comment: string;
-  conditions: SurfConditions;
+  wave_height: string;
+  wind_condition: string;
+  weather_condition: string;
+  crowd_level: string;
 }
-
-const mockReviews: Record<number, Review[]> = {
-  1: [ // Malibu Beach reviews
-    {
-      id: 101,
-      reviewerName: 'Sarah J.',
-      date: '2025-04-28',
-      rating: 5,
-      comment: 'Perfect day at Malibu! The waves were clean and consistent, great for longboarding.',
-      conditions: {
-        waveHeight: '3-4ft',
-        wind: 'Light offshore',
-        weather: 'Sunny',
-        crowdLevel: 'Moderate'
-      }
-    },
-    {
-      id: 102,
-      reviewerName: 'Mike T.',
-      date: '2025-04-15',
-      rating: 4,
-      comment: 'Good session today. Waves were a bit smaller than forecast but still fun.',
-      conditions: {
-        waveHeight: '2-3ft',
-        wind: 'Calm',
-        weather: 'Partly cloudy',
-        crowdLevel: 'Light'
-      }
-    }
-  ],
-  2: [ // Pipeline reviews
-    {
-      id: 201,
-      reviewerName: 'Jason K.',
-      date: '2025-05-01',
-      rating: 5,
-      comment: 'Epic day at Pipe! Solid 8ft barrels and only a few locals out.',
-      conditions: {
-        waveHeight: '6-8ft',
-        wind: 'Light offshore',
-        weather: 'Sunny',
-        crowdLevel: 'Light'
-      }
-    },
-    {
-      id: 202,
-      reviewerName: 'Kai L.',
-      date: '2025-04-22',
-      rating: 4,
-      comment: 'Pipe was firing today but super sketchy on the inside.',
-      conditions: {
-        waveHeight: '7-9ft',
-        wind: 'Offshore',
-        weather: 'Clear',
-        crowdLevel: 'Moderate'
-      }
-    }
-  ],
-  3: [ // Bells Beach reviews
-    {
-      id: 301,
-      reviewerName: 'Tom B.',
-      date: '2025-05-03',
-      rating: 5,
-      comment: 'Classic Bells today! Perfect right-handers with plenty of wall to work with.',
-      conditions: {
-        waveHeight: '4-5ft',
-        wind: 'Offshore',
-        weather: 'Clear',
-        crowdLevel: 'Moderate'
-      }
-    },
-    {
-      id: 302,
-      reviewerName: 'Mick F.',
-      date: '2025-04-25',
-      rating: 4,
-      comment: 'Good day at Bells but the wind picked up mid-session.',
-      conditions: {
-        waveHeight: '5-6ft',
-        wind: 'Light to moderate cross-shore',
-        weather: 'Partly cloudy',
-        crowdLevel: 'Moderate'
-      }
-    }
-  ]
-};
 
 const SpotDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { spot, loading, error } = useSpotData(id);
+  const { spot, loading: spotLoading, error: spotError } = useSpotData(id);
+  
+  // Get the numeric spot ID
+  const spotId = id ? parseInt(id, 10) : undefined;
+  
+  // Fetch reviews for this spot (limited to 2 for the preview)
+  const { 
+    reviews, 
+    loading: reviewsLoading, 
+    error: reviewsError 
+  } = useSpotReviews({ 
+    spotId, 
+    limit: 2, 
+    autoLoad: true 
+  });
+  
+  const loading = spotLoading || reviewsLoading;
+  const error = spotError || reviewsError;
   
   // helper function to render stars
   const renderStars = (rating: number) => {
@@ -344,16 +270,25 @@ const SpotDetails: React.FC = () => {
                 <ViewAllLink to={`/spot/${id}/reviews`}>View all →</ViewAllLink>
               </RatingsTitle>
               
-              {mockReviews[Number(id)] && mockReviews[Number(id)].length > 0 ? (
+              {reviews && reviews.length > 0 ? (
                 <div>
-                  {mockReviews[Number(id)].slice(0, 2).map(review => (
+                  {reviews.map(review => (
                     <ReviewPreview key={review.id}>
                       <ReviewerInfo>
-                        <ReviewerName>{review.reviewerName}</ReviewerName>
-                        <ReviewDate>{review.date}</ReviewDate>
+                        <ReviewerName>{review.user_id}</ReviewerName>
+                        <ReviewDate>{new Date(review.created_at).toLocaleDateString()}</ReviewDate>
                       </ReviewerInfo>
                       <StarsDisplay>{renderStars(review.rating)}</StarsDisplay>
                       <p>{review.comment}</p>
+                      {(review.wave_height || review.wind_condition || 
+                        review.weather_condition || review.crowd_level) && (
+                        <div style={{ fontSize: '0.9rem', color: '#666', marginTop: '8px' }}>
+                          {review.wave_height && <span>Waves: {review.wave_height}ft </span>}
+                          {review.wind_condition && <span>• Wind: {review.wind_condition} </span>}
+                          {review.weather_condition && <span>• Weather: {review.weather_condition} </span>}
+                          {review.crowd_level && <span>• Crowd: {review.crowd_level}/5</span>}
+                        </div>
+                      )}
                     </ReviewPreview>
                   ))}
                 </div>

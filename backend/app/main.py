@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 
-# Import the router from the app directory structure
-from app.routers import router as reviews_router
+# Import the routers from the app directory structure
+from app.routers import reviews_router, spots_router
 from app.database import get_supabase_client
 
 # Load environment variables
@@ -27,10 +27,13 @@ app.add_middleware(
 )
 
 # Include routers
-# This connects all the endpoints defined in the reviews_router to your main app
+# This connects all the endpoints defined in the routers to your main app
 # For example, if reviews_router has a POST /reviews endpoint with prefix /api,
 # it will be accessible at /api/reviews in your application
 app.include_router(reviews_router)
+
+# Include spots router with /api prefix
+app.include_router(spots_router, prefix="/api", tags=["spots"])
 
 
 @app.get("/")

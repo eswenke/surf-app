@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from typing import List, Optional
 from datetime import datetime, timezone
-from app.models import ReviewCreate, Review, ReviewUpdate
-from app.database import get_supabase_client
+from ..models import ReviewCreate, Review, ReviewUpdate
+from ..database import get_supabase_client
 
 router = APIRouter(prefix="/api", tags=["reviews"])
 
@@ -40,16 +40,18 @@ async def get_reviews(spot_id: Optional[int] = None, user_id: Optional[str] = No
     supabase = get_supabase_client()
     
     try:
-        query = supabase.table("reviews")
+        # Build the query with filters
+        query_params = {}
+        if spot_id is not None:
+            query_params["spot_id"] = spot_id
+        if user_id is not None:
+            query_params["user_id"] = user_id
         
-        # Apply filters if provided
-        if spot_id:
-            query = query.eq("spot_id", spot_id)
-        if user_id:
-            query = query.eq("user_id", user_id)
-        
-        # Execute the query
-        response = query.order("created_at", desc=True).execute()
+        # Execute the query with filters
+        if query_params:
+            response = supabase.table("reviews").select("*").match(query_params).order("created_at", desc=True).execute()
+        else:
+            response = supabase.table("reviews").select("*").order("created_at", desc=True).execute()
         
         return response.data
     except Exception as e:

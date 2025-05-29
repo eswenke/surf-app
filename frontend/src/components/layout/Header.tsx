@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faGear, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -105,8 +105,9 @@ const PanelHeader = styled.div`
 `;
 
 const Header: React.FC = () => {
-  const [isSidePanelOpen, setIsSidePanelOpen] = React.useState(false);
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await signOut();
@@ -142,7 +143,10 @@ const Header: React.FC = () => {
       {/* The side panel itself */}
       <SidePanel open={isSidePanelOpen}>
         <PanelHeader>WaveFinder</PanelHeader>
-        <MenuOption>
+        <MenuOption onClick={() => {
+          navigate('/profile');
+          setIsSidePanelOpen(false);
+        }}>
           <FontAwesomeIcon icon={faUser} size="lg" />
           Profile
         </MenuOption>

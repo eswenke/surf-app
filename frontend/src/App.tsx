@@ -8,6 +8,7 @@ import Map from './pages/Map';
 import SavedSpots from './pages/SavedSpots';
 import SpotDetails from './pages/SpotDetails';
 import SpotReviews from './pages/SpotReviews';
+import Profile from './pages/Profile';
 import AuthForm from './components/auth/AuthForm';
 
 // Auth
@@ -48,6 +49,12 @@ function App() {
           <Route path="/spot/:id/reviews" element={
             <ProtectedRoute>
               <SpotReviews />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           } />
           

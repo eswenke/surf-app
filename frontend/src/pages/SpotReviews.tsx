@@ -1,8 +1,14 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
 import { useSpotData } from '../hooks/useSpotData';
+import { useReviews } from '../hooks/useReviews';
+import { useUserProfile } from '../hooks/useUserProfile';
+import { useAuth } from '../context/AuthContext';
+import ReviewList from '../components/reviews/ReviewList';
+import ReviewForm from '../components/reviews/ReviewForm';
+import { ReviewCreate, ReviewUpdate } from '../services/api';
 // import SurfboardScroller from '../components/common/SurfboardScroller';
 
 // Styled components
@@ -58,17 +64,23 @@ const RatingCount = styled.div`
   color: #666;
 `;
 
-const ReviewsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+const FormSection = styled.div`
+  margin-bottom: 2rem;
 `;
 
-const ReviewCard = styled.div`
-  background-color: white;
+const AddReviewButton = styled.button`
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
   border-radius: var(--border-radius);
-  padding: 1.5rem;
-  box-shadow: var(--box-shadow);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: var(--primary-dark);
+  }
 `;
 
 const ReviewHeader = styled.div`
@@ -265,13 +277,27 @@ const mockReviews: Record<number, Review[]> = {
   ]
 };
 
+const MOCK_USER_ID = 'user-123';
+
 const SpotReviews: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { spot, loading, error } = useSpotData(id);
+  const { spot, loading: spotLoading, error: spotError } = useSpotData(id);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const { user } = useAuth();
+  const { username, loading: profileLoading } = useUserProfile();
   
-  // Get reviews for this spot
+  // Get the numeric spot ID
   const spotId = id ? parseInt(id, 10) : 0;
-  const reviews = mockReviews[spotId] || [];
+  
+  // Use our custom hook to fetch reviews from the backend
+  const { 
+    reviews, 
+    loading: reviewsLoading, 
+    error: reviewsError,
+    createReview,
+    updateReview,
+    deleteReview
+  } = useReviews({ spotId, autoLoad: true });
   
   // Calculate average rating
   const averageRating = reviews.length > 0 
@@ -282,6 +308,17 @@ const SpotReviews: React.FC = () => {
   const renderStars = (rating: number) => {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   };
+  
+  // Handle form submission for new reviews
+  const handleCreateReview = async (reviewData: ReviewCreate | ReviewUpdate) => {
+    // We know this is a create operation, so we can safely cast to ReviewCreate
+    // The form ensures all required fields are present
+    await createReview(reviewData as ReviewCreate);
+    setShowReviewForm(false);
+  };
+  
+  const loading = spotLoading || reviewsLoading || profileLoading;
+  const error = spotError || reviewsError;
   
   if (loading) {
     return (
@@ -301,6 +338,14 @@ const SpotReviews: React.FC = () => {
     );
   }
   
+  // Redirect to login if trying to add a review while not logged in
+  if (showReviewForm && !user) {
+    return <Navigate to="/login" state={{ from: `/spot/${id}/reviews` }} />;
+  }
+  
+  // Don't show the add review button if not logged in
+  const canAddReview = !!user;
+  
   return (
     <Layout>
       <ReviewsContainer>
@@ -310,7 +355,23 @@ const SpotReviews: React.FC = () => {
             <BackLink to={`/spot/${id}`}>← Back to {spot.name}</BackLink>
             <SpotTitle>{spot.name} Reviews</SpotTitle>
           </div>
+          {canAddReview && (
+            <AddReviewButton onClick={() => setShowReviewForm(!showReviewForm)}>
+              {showReviewForm ? 'Cancel' : '+ Add Review'}
+            </AddReviewButton>
+          )}
         </ReviewsHeader>
+        
+        {showReviewForm && user && username && (
+          <FormSection>
+            <ReviewForm 
+              spotId={spotId}
+              userId={username} // Use username instead of user.id
+              onSubmit={handleCreateReview}
+              onCancel={() => setShowReviewForm(false)}
+            />
+          </FormSection>
+        )}
         
         <ReviewsOverview>
           <AverageRating>{averageRating}</AverageRating>
@@ -318,28 +379,12 @@ const SpotReviews: React.FC = () => {
           <RatingCount>({reviews.length} reviews)</RatingCount>
         </ReviewsOverview>
         
-        <ReviewsList>
-          {reviews.length > 0 ? (
-            reviews.map(review => (
-              <ReviewCard key={review.id}>
-                <ReviewHeader>
-                  <ReviewerName>{review.reviewerName}</ReviewerName>
-                  <ReviewDate>{review.date}</ReviewDate>
-                </ReviewHeader>
-                <StarsDisplay>{renderStars(review.rating)}</StarsDisplay>
-                <ReviewComment>{review.comment}</ReviewComment>
-                <div>
-                  <ConditionsTag>Waves: {review.conditions.waveHeight}</ConditionsTag>
-                  <ConditionsTag>Wind: {review.conditions.wind}</ConditionsTag>
-                  <ConditionsTag>Weather: {review.conditions.weather}</ConditionsTag>
-                  <ConditionsTag>Crowd: {review.conditions.crowdLevel}</ConditionsTag>
-                </div>
-              </ReviewCard>
-            ))
-          ) : (
-            <p>No reviews yet for this spot.</p>
-          )}
-        </ReviewsList>
+        <ReviewList 
+          reviews={reviews}
+          onUpdateReview={updateReview}
+          onDeleteReview={deleteReview}
+          currentUserId={username || ''} // Use username for comparison
+        />
       </ReviewsContainer>
     </Layout>
   );
