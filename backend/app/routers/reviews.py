@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from ..models import ReviewCreate, Review, ReviewUpdate
 from ..database import get_supabase_client
 
-router = APIRouter(prefix="/api", tags=["reviews"])
+router = APIRouter()
 
 
 @router.post("/reviews", response_model=Review)
