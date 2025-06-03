@@ -4,7 +4,7 @@
 
 // In production, this should be set to the deployed backend URL
 // For local development, it defaults to localhost
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL // || 'http://localhost:8000/api';
 
 interface ApiResponse<T> {
   data?: T;
