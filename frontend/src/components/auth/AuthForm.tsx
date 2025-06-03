@@ -64,14 +64,16 @@ const ToggleText = styled.p`
   color: #666;
 `;
 
-const ToggleButton = styled.button`
-  background: none;
-  border: none;
+const ToggleLink = styled.span`
   color: #0077b6;
   font-weight: bold;
   cursor: pointer;
-  padding: 0;
   margin-left: 4px;
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const AuthForm: React.FC = () => {
@@ -147,9 +149,9 @@ const AuthForm: React.FC = () => {
         </Button>
         <ToggleText>
           {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <ToggleButton type="button" onClick={() => setIsLogin(!isLogin)}>
+          <ToggleLink onClick={() => setIsLogin(!isLogin)}>
             {isLogin ? 'Sign Up' : 'Log In'}
-          </ToggleButton>
+          </ToggleLink>
         </ToggleText>
       </Form>
     </Container>

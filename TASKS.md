@@ -16,6 +16,10 @@
 - do some more testing with surfpy to verify accuracy
 
 ## general
-- figure out a new name
+- put in SLO spots via surfpy data and d3js visuals
+- put in images for spots (supabase storage?)
+- polish up home page (wave outline for top bar, rotating surf pictures)
+- add 'your reviews' to the top bar
+- settings / profile page revamp? (what goes here)
 - figure out how spot unlock mechanism (geotags and such)
-- figure out testing throughout
+- figure out a new name
