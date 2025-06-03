@@ -31,12 +31,8 @@ app.add_middleware(
 
 # Include routers
 # This connects all the endpoints defined in the routers to your main app
-# For example, if reviews_router has a POST /reviews endpoint with prefix /api,
-# it will be accessible at /api/reviews in your application
-app.include_router(reviews_router, prefix="/api", tags=["reviews"])
-
-# Include spots router with /api prefix
-app.include_router(spots_router, prefix="/api", tags=["spots"])
+app.include_router(reviews_router, tags=["reviews"])
+app.include_router(spots_router, tags=["spots"])
 
 
 @app.get("/")
