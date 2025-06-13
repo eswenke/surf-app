@@ -65,11 +65,19 @@ class WindPlots(object):
             print(f"Error fetching wind data: {e}")
             return False
 
-    def plot_wind_with_arrows(self, location_name):
-        """Plot wind speed with directional arrows for the specified location"""
+    def plot_wind(self, location_name, save_path=None):
+        """Plot wind speed with directional arrows for the specified location
+        
+        Args:
+            location_name (str): Name of the location to plot
+            save_path (str, optional): Path to save the plot. If None, a default path will be used.
+        
+        Returns:
+            str: Path where the plot was saved
+        """
         if location_name not in self.locations or not self.locations[location_name]['data']:
             print(f"No data available for {location_name}")
-            return
+            return None
             
         location = self.locations[location_name]
         wind_data = location['data']
@@ -131,8 +139,17 @@ class WindPlots(object):
         ax.grid(True, linestyle='--', alpha=0.7)
         
         plt.tight_layout()
-        plt.show()
-        plt.gcf().clear()
+        
+        # Instead of showing the plot interactively, save it to a file
+        if save_path is None:
+            # Create a default filename based on location and current time
+            current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            save_path = f"{location_name.replace(' ', '_')}_{current_time}.png"
+        
+        plt.savefig(save_path)
+        plt.close(fig)  # Close the figure to free memory
+        
+        return save_path
 
 
 if __name__ == '__main__':
@@ -173,6 +190,9 @@ if __name__ == '__main__':
     
     # Fetch and plot the wind data
     if wind_plots.fetch_wind_data(selected_location, today_utc, ending_date_utc):
-        wind_plots.plot_wind_with_arrows(selected_location)
+        # Save the plot to a file instead of showing it
+        saved_path = wind_plots.plot_wind(selected_location)
+        if saved_path:
+            print(f"Wind plot saved to: {saved_path}")
     else:
         print(f'Failed to fetch wind data for {selected_location}')

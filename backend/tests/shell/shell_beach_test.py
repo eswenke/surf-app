@@ -7,7 +7,7 @@ if __name__=='__main__':
     # Shell Beach coordinates: 35.1553, -120.6724
     shell_wave_location = surfpy.Location(35.1553, -120.6724, altitude=0.0, name='Shell Beach')
     shell_wave_location.depth = 5.0
-    shell_wave_location.angle = 195.0  # South-Southwest facing beach (225° is SW)
+    shell_wave_location.angle = 195.0  # tuned for shell
     shell_wave_location.slope = 0.01
     west_coast_wave_model = surfpy.wavemodel.us_west_coast_gfs_wave_model()
 
