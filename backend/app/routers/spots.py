@@ -6,9 +6,9 @@ from typing import List, Optional
 
 from ..database import get_supabase_client
 from ..models import Spot, SpotCreate, SpotUpdate, SpotForecast
-from ..services.surf_service import (
-    get_formatted_spot_forecast,
-    update_all_forecasts
+from ..services.forecast_service import (
+    fetch_forecast_for_spot,
+    update_all_spot_forecasts
 )
 
 router = APIRouter()
@@ -125,7 +125,7 @@ async def get_spot_forecast(spot_id: int, refresh: bool = False):
         spot_id: ID of the spot
         refresh: Whether to force a refresh of the forecast
     """
-    forecast = await get_formatted_spot_forecast(spot_id)
+    forecast = await fetch_forecast_for_spot(spot_id)
     
     if not forecast:
         raise HTTPException(status_code=404, detail=f"Spot with ID {spot_id} not found")
@@ -140,5 +140,5 @@ async def update_forecasts(background_tasks: BackgroundTasks):
     
     This is a long-running operation, so it runs in the background
     """
-    background_tasks.add_task(update_all_forecasts)
+    background_tasks.add_task(update_all_spot_forecasts)
     return {"message": "Forecast update started in the background"}

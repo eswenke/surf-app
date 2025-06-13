@@ -14,14 +14,6 @@ from app.services.forecast_service import update_all_spot_forecasts
 # Load environment variables
 load_dotenv()
 
-# Initialize FastAPI app
-app = FastAPI(
-    title="Surf Spot API",
-    description="API for surf spot reviews and forecasts",
-    version="0.1.0",
-    lifespan=lifespan
-)
-
 # Set up the scheduler
 scheduler = BackgroundScheduler()
 scheduler.add_job(
@@ -40,6 +32,14 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown: Stop the scheduler
     scheduler.shutdown()
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="Surf Spot API",
+    description="API for surf spot reviews and forecasts",
+    version="0.1.0",
+    lifespan=lifespan
+)
 
 # Set CORS policy
 app.add_middleware(

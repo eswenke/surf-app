@@ -1,11 +1,53 @@
 # app/services/forecast_service.py
 import os
 import datetime
+from datetime import timezone
 import json
 import pytz
 import surfpy
 from supabase import create_client, Client
 from typing import List, Dict, Any, Optional
+
+
+def tune_spot(location):
+    """Tune surf location parameters based on spot name
+    
+    Args:
+        location (surfpy.Location): The surf location to tune parameters for
+    """
+    # Default values if no specific tuning is applied
+    default_depth = 30.0  # meters
+    default_angle = 195.0  # degrees (South-Southwest facing)
+    default_slope = 0.02  # beach slope
+    
+    # Spot-specific tuning based on name
+    name = location.name.lower() if location.name else ""
+    
+    if "shell beach" in name:
+        # Shell Beach parameters
+        location.depth = 30.0  # Using default depth without specific buoy data
+        location.angle = 195.0  # South-Southwest facing
+        location.slope = 0.01
+        
+    elif "pismo beach" in name:
+        # Pismo Beach parameters - more gradual slope than Shell Beach
+        location.depth = 30.0  # Using default depth without specific buoy data
+        location.angle = 225.0  # Southwest facing
+        location.slope = 0.005  # More gradual slope
+        
+    elif "morro bay" in name:
+        # Morro Bay parameters - protected bay
+        location.depth = 30.0  # Using default depth without specific buoy data
+        location.angle = 270.0  # West facing
+        location.slope = 0.015
+        
+    else:
+        # Use default parameters for unknown spots
+        location.depth = default_depth
+        location.angle = default_angle
+        location.slope = default_slope
+    
+    print(f"Tuned parameters for {location.name}: depth={location.depth}m, angle={location.angle}°, slope={location.slope}")
 
 # initialize Supabase client
 supabase_url = os.environ.get("SUPABASE_URL")
@@ -35,10 +77,13 @@ def fetch_forecast_for_spot(spot):
             name=spot["name"]
         )
         
-        # Set up wave model parameters similar to shell_beach_test.py
+        # Set default wave model parameters
         surf_location.depth = 30.0  # Default depth in meters
-        surf_location.angle = 195.0  # Default beach angle (South-Southwest facing)
+        surf_location.angle = 270.0  # Default beach angle (South-Southwest facing)
         surf_location.slope = 0.02  # Default beach slope
+
+        # Tune parameters for spot based on spot name
+        tune_spot(surf_location)
         
         # Initialize the west coast wave model
         west_coast_wave_model = surfpy.wavemodel.us_west_coast_gfs_wave_model()
@@ -93,7 +138,7 @@ def fetch_forecast_for_spot(spot):
                 
                 if closest_station:
                     # Get current tide data
-                    now = datetime.datetime.utcnow()
+                    now = datetime.datetime.now(timezone.utc)
                     end_time = now + datetime.timedelta(hours=1)
                     tide_data = closest_station.fetch_tide_data(
                         now, end_time, 
@@ -110,7 +155,7 @@ def fetch_forecast_for_spot(spot):
             # Extract the required data for our forecast
             forecast = {
                 "spot_id": spot["id"],
-                "timestamp": datetime.datetime.now().isoformat(),
+                "timestamp": datetime.datetime.now(timezone.utc).isoformat(),
                 "wave_height": current_forecast.minimum_breaking_height,  # Using min breaking height as requested
                 "tide": tide_value,
                 "wind_speed": current_forecast.wind_speed,
@@ -162,7 +207,7 @@ def update_spot_forecast(spot_id, forecast):
         forecast (dict): Forecast data for the spot
     """
     # First, delete old forecasts for this spot
-    now = datetime.datetime.utcnow().isoformat()
+    now = datetime.datetime.now(timezone.utc).isoformat()
     supabase.table("spot_forecasts").delete().eq("spot_id", spot_id).execute()
     
     # Then insert the new forecast
