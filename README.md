@@ -4,7 +4,7 @@ Surf forecaster and spot ratings application.
 ## things to remember
 
 ### virtual env
-- to create the virtual env: `python -m venv venv`
+- to create the virtual env: `python3 -m venv venv`
 - to start the virtual env: `source venv/bin/activate` (for mac/linux) or `venv\Scripts\activate` (for windows)
     - (Windows) if script execution not enabled: open up powershell as an administrator and run `Set-ExecutionPolicy Unrestricted -Force`
 - to exit the virtual env: `deactivate`
