@@ -17,6 +17,7 @@
 ## general
 - fix frontend search of spots
 - add user scoped reviews, saved spots
+- cleanup spot pages + hooks and make sure types/styled components are not redundant
 - add in more details about spots via types and supabase columns
 - put in images for spots (supabase storage?)
 - settings / profile page revamp? (what goes here)
