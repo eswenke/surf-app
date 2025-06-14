@@ -185,7 +185,9 @@ interface Review {
 
 const SpotDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { spot, loading: spotLoading, error: spotError } = useSpotData(id);
+  // Parse the ID from the URL to get the numeric spot ID for useSpotData
+  const numericId = id ? parseInt(id, 10) : undefined;
+  const { spot, loading: spotLoading, error: spotError } = useSpotData(numericId);
   
   // Get the numeric spot ID
   const spotId = id ? parseInt(id, 10) : undefined;
@@ -234,11 +236,9 @@ const SpotDetails: React.FC = () => {
           <SpotTitle>{spot.name}</SpotTitle>
           <SpotRating>
             <span>⭐</span>
-            <span>{spot.rating}/5</span>
+            <span>{spot.difficulty ? `${spot.difficulty}/5` : 'Not rated'}</span>
           </SpotRating>
         </SpotHeader>
-        
-        <SpotLocation>{spot.location}</SpotLocation>
         
         <SpotContent>
           <div>
@@ -250,16 +250,17 @@ const SpotDetails: React.FC = () => {
             </SpotDescription>
             
             <ForecastSection>
-              <ForecastTitle>Forecast</ForecastTitle>
-              <ForecastGrid>
-                {spot.forecast.map((day, index) => (
-                  <ForecastCard key={index}>
-                    <ForecastDay>{day.day}</ForecastDay>
-                    <ForecastWave>{day.waveHeight}</ForecastWave>
-                    <div>Wind: {day.wind}</div>
+              <ForecastTitle>Current Conditions</ForecastTitle>
+              <div>
+                {spot.waveHeight ? (
+                  <ForecastCard>
+                    <ForecastDay>Today</ForecastDay>
+                    <ForecastWave>Wave Height: {spot.waveHeight}</ForecastWave>
                   </ForecastCard>
-                ))}
-              </ForecastGrid>
+                ) : (
+                  <p>No current wave data available</p>
+                )}
+              </div>
             </ForecastSection>
           </div>
           

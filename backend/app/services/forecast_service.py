@@ -117,40 +117,10 @@ def fetch_forecast_for_spot(spot):
         if len(data) > 0:
             current_forecast = data[0]
             
-            # Get tide data if available
+            # TODO: Add tide data fetching logic back in
             tide_value = None
-            try:
-                # Find the nearest tide station
-                tide_stations = surfpy.TideStations()
-                tide_stations.fetch_stations()
-                
-                # Find closest station
-                closest_station = None
-                min_distance = float('inf')
-                
-                for station in tide_stations.stations:
-                    # Calculate rough distance (this is simplified)
-                    dist = ((station.latitude - spot["latitude"]) ** 2 + 
-                           (station.longitude - spot["longitude"]) ** 2) ** 0.5
-                    if dist < min_distance:
-                        min_distance = dist
-                        closest_station = station
-                
-                if closest_station:
-                    # Get current tide data
-                    now = datetime.datetime.now(timezone.utc)
-                    end_time = now + datetime.timedelta(hours=1)
-                    tide_data = closest_station.fetch_tide_data(
-                        now, end_time, 
-                        interval=surfpy.TideStation.DataInterval.default, 
-                        unit=surfpy.units.Units.english
-                    )
-                    
-                    # Extract current tide level if available
-                    if tide_data and tide_data[1] and len(tide_data[1]) > 0:
-                        tide_value = tide_data[1][0].water_level
-            except Exception as e:
-                print(f"Error fetching tide data: {e}")
+            tide_station_id = None
+            tide_station_name = None
             
             # Extract the required data for our forecast
             forecast = {

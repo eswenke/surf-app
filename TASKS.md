@@ -12,15 +12,13 @@
 - add rotating surf pictures faded into main page background
 
 ## backend
-- integrate surfpy with some default spots in SLO
-- do some more testing with surfpy to verify accuracy
+- figure out why spots are not being retrieved from frontend properly
 
 ## general
-- create three spots in SLO, replacing mock spots
+- fix frontend search of spots
+- add user scoped reviews, saved spots
+- add in more details about spots via types and supabase columns
 - put in images for spots (supabase storage?)
-- add 'your reviews' to the top bar
 - settings / profile page revamp? (what goes here)
 - polish up home page (wave outline for top bar, rotating surf pictures)
-- put in SLO spots via surfpy data and d3js visuals
 - figure out how spot unlock mechanism (geotags and such)
-- figure out a new name

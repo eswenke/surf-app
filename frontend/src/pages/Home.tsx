@@ -195,12 +195,12 @@ const Home: React.FC = () => {
                 {results.map(spot => (
                   <SearchResultItem key={spot.id} onClick={() => handleSelectSpot(spot)}>
                     <SpotName>{spot.name}</SpotName>
-                    <SpotLocation>{spot.location}</SpotLocation>
+                    <SpotLocation>{spot.description ? spot.description.substring(0, 50) + (spot.description.length > 50 ? '...' : '') : ''}</SpotLocation>
                     <SpotInfo>
                       <SpotRating>
-                        {renderStars(spot.rating)} ({spot.rating})
+                        {spot.difficulty ? `${renderStars(spot.difficulty)} (${spot.difficulty})` : 'Not rated'}
                       </SpotRating>
-                      <SpotWaveHeight>Waves: {spot.waveHeight}</SpotWaveHeight>
+                      <SpotWaveHeight>{spot.waveHeight ? `Waves: ${spot.waveHeight}` : ''}</SpotWaveHeight>
                     </SpotInfo>
                   </SearchResultItem>
                 ))}

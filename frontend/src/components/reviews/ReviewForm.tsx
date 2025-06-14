@@ -2,6 +2,152 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ReviewCreate, ReviewUpdate } from '../../services/api';
 
+// Styled components
+const FormContainer = styled.form`
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 16px;
+  width: 100%;
+`;
+
+const FormRow = styled.div`
+  display: flex;
+  gap: 16px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 8px;
+  }
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #333;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  
+  &:focus {
+    outline: none;
+    border-color: #0077cc;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  min-height: 100px;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #0077cc;
+  }
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+  
+  &:focus {
+    outline: none;
+    border-color: #0077cc;
+  }
+`;
+
+const StarRating = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+`;
+
+const Star = styled.span<{ selected: boolean }>`
+  font-size: 32px;
+  cursor: pointer;
+  color: ${props => props.selected ? '#FFD700' : '#ddd'};
+  transition: color 0.2s;
+  
+  &:hover {
+    color: #FFD700;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+`;
+
+const Button = styled.button`
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+`;
+
+const SubmitButton = styled(Button)`
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  
+  &:hover {
+    background-color: #005fa3;
+  }
+  
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+`;
+
+const CancelButton = styled(Button)`
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const SectionTitle = styled.h4`
+  margin-top: 24px;
+  margin-bottom: 16px;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+`;
+
+const ErrorMessage = styled.div`
+  color: #d32f2f;
+  background-color: #ffeaea;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+`;
+
 interface ReviewFormProps {
   spotId: number;
   userId: string; // This will now be the username
@@ -208,149 +354,5 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   );
 };
 
-const FormContainer = styled.form`
-  background-color: white;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 16px;
-  width: 100%;
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  gap: 16px;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 8px;
-  }
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 500;
-  color: #333;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-  
-  &:focus {
-    outline: none;
-    border-color: #0077cc;
-  }
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-  min-height: 100px;
-  resize: vertical;
-  
-  &:focus {
-    outline: none;
-    border-color: #0077cc;
-  }
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: white;
-  
-  &:focus {
-    outline: none;
-    border-color: #0077cc;
-  }
-`;
-
-const StarRating = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-`;
-
-const Star = styled.span<{ selected: boolean }>`
-  font-size: 32px;
-  cursor: pointer;
-  color: ${props => props.selected ? '#FFD700' : '#ddd'};
-  transition: color 0.2s;
-  
-  &:hover {
-    color: #FFD700;
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-`;
-
-const Button = styled.button`
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-`;
-
-const SubmitButton = styled(Button)`
-  background-color: #0077cc;
-  color: white;
-  border: none;
-  
-  &:hover {
-    background-color: #005fa3;
-  }
-  
-  &:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-`;
-
-const CancelButton = styled(Button)`
-  background-color: white;
-  color: #333;
-  border: 1px solid #ddd;
-  
-  &:hover {
-    background-color: #f5f5f5;
-  }
-`;
-
-const SectionTitle = styled.h4`
-  margin-top: 24px;
-  margin-bottom: 16px;
-  color: #555;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-`;
-
-const ErrorMessage = styled.div`
-  color: #d32f2f;
-  background-color: #ffeaea;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-`;
 
 export default ReviewForm;

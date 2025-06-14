@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import { useAuth } from '../context/AuthContext';
+import { useSavedSpots } from '../hooks/useSavedSpots';
 
 const SavedSpotsContainer = styled.div`
   max-width: 1200px;
@@ -62,76 +64,87 @@ const SpotStats = styled.div`
 
 const SavedSpots: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { spots, loading, error, unsaveSpot } = useSavedSpots({
+    userId: user?.id,
+    autoLoad: true
+  });
   
-  // This would be fetched from an API in a real app
-  const mockSavedSpots = [
-    {
-      id: 1,
-      name: 'Malibu Beach',
-      location: 'California, USA',
-      rating: 4.5,
-      waveHeight: '3-4ft',
-      description: 'A world-famous right point break perfect for longboarding.',
-      forecast: [
-        { day: 'Today', waveHeight: '3-4ft', wind: '5mph' },
-        { day: 'Tomorrow', waveHeight: '2-3ft', wind: '8mph' },
-        { day: 'Wed', waveHeight: '4-5ft', wind: '3mph' }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Pipeline',
-      location: 'Oahu, Hawaii',
-      rating: 5.0,
-      waveHeight: '6-8ft',
-      description: 'One of the most famous and dangerous waves in the world.',
-      forecast: [
-        { day: 'Today', waveHeight: '6-8ft', wind: '3mph' },
-        { day: 'Tomorrow', waveHeight: '7-9ft', wind: '4mph' },
-        { day: 'Wed', waveHeight: '5-7ft', wind: '6mph' }
-      ]
-    },
-    {
-      id: 3,
-      name: 'Bells Beach',
-      location: 'Victoria, Australia',
-      rating: 4.2,
-      waveHeight: '4-5ft',
-      description: 'Home to the world\'s longest-running surf competition.',
-      forecast: [
-        { day: 'Today', waveHeight: '4-5ft', wind: '7mph' },
-        { day: 'Tomorrow', waveHeight: '3-4ft', wind: '9mph' },
-        { day: 'Wed', waveHeight: '5-6ft', wind: '4mph' }
-      ]
-    }
-  ];
+  // Convert wind speed from m/s to knots
+  const convertToKnots = (speedInMps: number): number => {
+    return Math.round(speedInMps * 1.94384);
+  };
   
   const handleSpotClick = (spotId: number) => {
     navigate(`/spot/${spotId}`);
   };
+  
+  const handleUnsaveSpot = async (e: React.MouseEvent, spotId: number) => {
+    e.stopPropagation(); // Prevent triggering the card click
+    await unsaveSpot(spotId);
+  };
+  
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
   
   return (
     <Layout>
       <SavedSpotsContainer>
         <Title>Your Saved Spots</Title>
         
-        {mockSavedSpots.length === 0 ? (
-          <p>You haven't saved any spots yet. Explore the map to find spots!</p>
+        {loading ? (
+          <LoadingMessage>Loading your saved spots...</LoadingMessage>
+        ) : error ? (
+          <ErrorMessage>{error}</ErrorMessage>
+        ) : spots.length === 0 ? (
+          <EmptyState>
+            <p>You haven't saved any spots yet. Explore the map to find spots!</p>
+            <ExploreButton onClick={() => navigate('/map')}>Explore Map</ExploreButton>
+          </EmptyState>
         ) : (
           <SpotGrid>
-            {mockSavedSpots.map(spot => (
+            {spots.map(spot => (
               <SpotCard 
                 key={spot.id} 
                 onClick={() => handleSpotClick(spot.id)}
               >
                 <SpotImage />
                 <SpotContent>
-                  <SpotName>{spot.name}</SpotName>
-                  <SpotLocation>{spot.location}</SpotLocation>
+                  <SpotHeader>
+                    <SpotName>{spot.name}</SpotName>
+                    <UnsaveButton onClick={(e) => handleUnsaveSpot(e, spot.id)}>Unsave</UnsaveButton>
+                  </SpotHeader>
+                  <SpotLocation>Central California Coast</SpotLocation>
                   <SpotStats>
-                    <span>⭐ {spot.rating}</span>
-                    <span>🌊 {spot.waveHeight}</span>
+                    <span>⭐ 0</span>
+                    <span>🌊 {spot.current_forecast?.wave_height ? `${spot.current_forecast.wave_height.toFixed(1)} ft` : '0 ft'}</span>
                   </SpotStats>
+                  
+                  <ForecastSection>
+                    <ForecastDay>
+                      <ForecastDayName>Today</ForecastDayName>
+                      <ForecastData>
+                        <div>🌊 {spot.current_forecast?.wave_height ? `${spot.current_forecast.wave_height.toFixed(1)} ft` : '0 ft'}</div>
+                        <div>💨 {spot.current_forecast?.wind_speed ? `${convertToKnots(spot.current_forecast.wind_speed)} kts` : '0 kts'}</div>
+                      </ForecastData>
+                    </ForecastDay>
+                    <ForecastDay>
+                      <ForecastDayName>Tomorrow</ForecastDayName>
+                      <ForecastData>
+                        <div>🌊 - ft</div>
+                        <div>💨 - kts</div>
+                      </ForecastData>
+                    </ForecastDay>
+                    <ForecastDay>
+                      <ForecastDayName>Wed</ForecastDayName>
+                      <ForecastData>
+                        <div>🌊 - ft</div>
+                        <div>💨 - kts</div>
+                      </ForecastData>
+                    </ForecastDay>
+                  </ForecastSection>
                 </SpotContent>
               </SpotCard>
             ))}
@@ -141,5 +154,92 @@ const SavedSpots: React.FC = () => {
     </Layout>
   );
 };
+
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+`;
+
+const ErrorMessage = styled.div`
+  color: #e74c3c;
+  padding: 1rem;
+  background-color: #fde2e2;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: #666;
+`;
+
+const ExploreButton = styled.button`
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transition);
+  
+  &:hover {
+    background-color: var(--primary-color-dark);
+  }
+`;
+
+const SpotHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+const UnsaveButton = styled.button`
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const ForecastSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+`;
+
+const ForecastDay = styled.div`
+  flex: 1;
+  text-align: center;
+`;
+
+const ForecastDayName = styled.div`
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+`;
+
+const ForecastData = styled.div`
+  font-size: 0.9rem;
+  color: #333;
+  
+  div {
+    margin-bottom: 0.25rem;
+  }
+`;
 
 export default SavedSpots;

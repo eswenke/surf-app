@@ -121,6 +121,7 @@ const Header: React.FC = () => {
       <NavLinks>
         <NavLink to="/saved">Saved Spots</NavLink>
         <NavLink to="/map">Map</NavLink>
+        <NavLink to="/reviews">Reviews</NavLink>
       </NavLinks>
 
       <ProfileIcon as="button" onClick={() => setIsSidePanelOpen(!isSidePanelOpen)}>

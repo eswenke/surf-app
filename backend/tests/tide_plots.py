@@ -2,6 +2,7 @@ import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from datetime import timezone
 
 import surfpy
 
@@ -51,47 +52,59 @@ class TidePlots(object):
         plt.gcf().clear()
 
     def plot_water_level(self, station_id):
+        if station_id not in self.data:
+            return False
+        
         tidal_events, tidal_data = self.data[station_id]
         if tidal_data is None:
-            return
-
+            return False
+        
         dates = [x.date for x in tidal_data]
         levels = [x.water_level for x in tidal_data]
-        low_dates = [x.date for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.low_tide]
-        low_levels = [x.water_level for x in tidal_events if x.tidal_event== surfpy.TideEvent.TidalEventType.low_tide]
-        high_dates = [x.date for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.high_tide]
-        high_levels = [x.water_level for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.high_tide]
+        
+        # Extract high and low tide events
+        low_dates = []
+        low_levels = []
+        high_dates = []
+        high_levels = []
+        
+        if tidal_events:
+            low_dates = [x.date for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.low_tide]
+            low_levels = [x.water_level for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.low_tide]
+            high_dates = [x.date for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.high_tide]
+            high_levels = [x.water_level for x in tidal_events if x.tidal_event == surfpy.TideEvent.TidalEventType.high_tide]
         
         plt.figure(1)
         plt.title('Station ' + station_id + ': Water Level (ft)')
         plt.xlabel('Date')
         plt.ylabel('Water Level (ft)')
         plt.plot(dates, levels)
-        plt.scatter(low_dates, low_levels, c='r')
-        plt.scatter(high_dates, high_levels, c='g')
+        plt.scatter(low_dates, low_levels, c='r', label='Low Tide')
+        plt.scatter(high_dates, high_levels, c='g', label='High Tide')
         
         plt.grid()
-        plt.show()
+        plt.legend()
+        
+        # Save the plot to a file instead of showing it
+        filename = f'tide_plot_{station_id}.png'
+        plt.savefig(filename)
+        print(f'Plot saved to {filename}')
+        
         plt.gcf().clear()
+        return True
 
 
 if __name__ == '__main__':
     stations = TidePlots()
-    newport_station_id = '8452660'
-    
-    # Configure the number of days to forecast
-    num_days = 3  # Change this value to show more or fewer days
-    
+    port_san_luis_id = '9412110'  # Port San Luis - best for Shell Beach, Pismo Beach, and Morro Bay
     today = datetime.datetime.today()
-    ending_date = today + datetime.timedelta(days=num_days)
-    print(f"Fetching tide data for {num_days} days from {today.strftime('%Y-%m-%d')} to {ending_date.strftime('%Y-%m-%d')}")
+    ending_date = today + datetime.timedelta(days=8)
 
-    #if stations.fetch_tidal_data(newport_station_id, today, ending_date):
-    #    stations.plot_tidal_events(newport_station_id)
-    #else:
-    #    print('Failed to fetch tidal event data from ' + newport_station_id)
+    print(f"Fetching tide data for Port San Luis (ID: {port_san_luis_id})")
+    print(f"Date range: {today.strftime('%Y-%m-%d')} to {ending_date.strftime('%Y-%m-%d')}")
     
-    if stations.fetch_water_level_data(newport_station_id, today, ending_date):
-        stations.plot_water_level(newport_station_id)
+    if stations.fetch_water_level_data(port_san_luis_id, today, ending_date):
+        stations.plot_water_level(port_san_luis_id)
+        print(f"Tide plot saved to tide_plot_{port_san_luis_id}.png")
     else:
-        print('Failed to fetch water level data from ' + newport_station_id)
+        print(f"Failed to fetch water level data from station {port_san_luis_id}")

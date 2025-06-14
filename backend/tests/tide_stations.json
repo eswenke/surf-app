@@ -1,0 +1,34 @@
+{
+  "station_mapping": {
+    "Shell Beach": "9412110",
+    "Pismo Beach": "9412110",
+    "Morro Bay": "9412110"
+  },
+  "timestamp": "2025-06-13T16:28:20.509065",
+  "current_tides": {
+    "Shell Beach": {
+      "station_id": "9412110",
+      "station_name": "Port San Luis",
+      "tide_value": 0.234
+    },
+    "Pismo Beach": {
+      "station_id": "9412110",
+      "station_name": "Port San Luis",
+      "tide_value": 0.234
+    },
+    "Morro Bay": {
+      "station_id": "9412110",
+      "station_name": "Port San Luis",
+      "tide_value": 0.234
+    }
+  },
+  "metadata": {
+    "generated_by": "tide_plots.py",
+    "description": "Tide station mapping for surf spots",
+    "spots": [
+      "Shell Beach",
+      "Pismo Beach",
+      "Morro Bay"
+    ]
+  }
+}

@@ -50,6 +50,57 @@ async function fetchApi<T>(
 }
 
 export default {
+  // Spots endpoints
+  spots: {
+    /**
+     * Get all surf spots
+     */
+    getAll: async () => {
+      return fetchApi<Spot[]>('/spots');
+    },
+    
+    /**
+     * Get a specific spot by ID
+     */
+    getById: async (spotId: number) => {
+      return fetchApi<Spot>(`/spots/${spotId}`);
+    },
+    
+    /**
+     * Get forecast for a specific spot
+     */
+    getForecast: async (spotId: number) => {
+      return fetchApi<SpotForecast>(`/spots/${spotId}/forecast`);
+    },
+    
+    /**
+     * Save a spot for the current user
+     */
+    saveSpot: async (userId: string, spotId: number) => {
+      return fetchApi<{ message: string }>('/user-spots', {
+        method: 'POST',
+        body: JSON.stringify({ user_id: userId, spot_id: spotId }),
+      });
+    },
+    
+    /**
+     * Unsave a spot for the current user
+     */
+    unsaveSpot: async (userId: string, spotId: number) => {
+      return fetchApi<{ message: string }>(`/user-spots`, {
+        method: 'DELETE',
+        body: JSON.stringify({ user_id: userId, spot_id: spotId }),
+      });
+    },
+    
+    /**
+     * Get all spots saved by a user
+     */
+    getSavedSpots: async (userId: string) => {
+      return fetchApi<Spot[]>(`/user-spots?user_id=${userId}`);
+    },
+  },
+  
   // Reviews endpoints
   reviews: {
     /**
@@ -107,6 +158,44 @@ export default {
 };
 
 // Types that match the backend models
+export interface Spot {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  description: string;
+  difficulty_rating: number;
+  created_at: string;
+  updated_at: string;
+  current_forecast?: SpotForecast;
+}
+
+export interface SpotForecast {
+  spot_id: number;
+  wave_height: number;
+  tide?: number;
+  wind_speed: number;
+  wind_direction: number;
+  swell_components: {
+    primary?: {
+      height: number;
+      period: number;
+      direction: number;
+    };
+    secondary?: {
+      height: number;
+      period: number;
+      direction: number;
+    };
+    tertiary?: {
+      height: number;
+      period: number;
+      direction: number;
+    };
+  };
+  timestamp: string;
+}
+
 export interface Review {
   id: number;
   spot_id: number;
@@ -119,6 +208,7 @@ export interface Review {
   crowd_level?: number;
   created_at: string;
   updated_at?: string;
+  spot_name?: string; // Name of the associated spot
 }
 
 export interface ReviewCreate {

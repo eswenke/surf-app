@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { useAuth } from '../context/AuthContext';
 import { useUserProfile } from '../hooks/useUserProfile';
-import { useReviews } from '../hooks/useReviews';
 
 const ProfilePage: React.FC = () => {
   const { user, updateProfile } = useAuth();
@@ -15,13 +14,6 @@ const ProfilePage: React.FC = () => {
   const [newUsername, setNewUsername] = useState(username || '');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'profile' | 'reviews' | 'saved'>('profile');
-  
-  // Fetch user's reviews
-  const { reviews, loading: reviewsLoading } = useReviews({ 
-    userId: user?.id, 
-    autoLoad: true 
-  });
 
   const handleSaveUsername = async () => {
     if (!newUsername.trim()) {
@@ -65,28 +57,7 @@ const ProfilePage: React.FC = () => {
           <h1>Your Profile</h1>
         </ProfileHeader>
         
-        <TabsContainer>
-          <Tab 
-            active={activeTab === 'profile'} 
-            onClick={() => setActiveTab('profile')}
-          >
-            Profile
-          </Tab>
-          <Tab 
-            active={activeTab === 'reviews'} 
-            onClick={() => setActiveTab('reviews')}
-          >
-            Your Reviews
-          </Tab>
-          <Tab 
-            active={activeTab === 'saved'} 
-            onClick={() => setActiveTab('saved')}
-          >
-            Saved Spots
-          </Tab>
-        </TabsContainer>
-        
-        {activeTab === 'profile' && (
+
           <ProfileSection>
             <ProfileCard>
               <ProfileField>
@@ -123,46 +94,13 @@ const ProfilePage: React.FC = () => {
               
               {error && <ErrorMessage>{error}</ErrorMessage>}
               {success && <SuccessMessage>{success}</SuccessMessage>}
+              
+              <LinkContainer>
+                <LinkButton onClick={() => navigate('/reviews')}>View Your Reviews</LinkButton>
+                <LinkButton onClick={() => navigate('/saved')}>View Saved Spots</LinkButton>
+              </LinkContainer>
             </ProfileCard>
           </ProfileSection>
-        )}
-        
-        {activeTab === 'reviews' && (
-          <ProfileSection>
-            <SectionTitle>Your Reviews</SectionTitle>
-            {reviewsLoading ? (
-              <LoadingMessage>Loading your reviews...</LoadingMessage>
-            ) : reviews.length > 0 ? (
-              <ReviewsList>
-                {reviews.map(review => (
-                  <ReviewCard key={review.id}>
-                    <ReviewHeader>
-                      <h3>Rating: {review.rating}/5</h3>
-                      <ReviewDate>
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </ReviewDate>
-                    </ReviewHeader>
-                    <ReviewComment>{review.comment}</ReviewComment>
-                    <ViewSpotLink onClick={() => navigate(`/spot/${review.spot_id}`)}>
-                      View Spot
-                    </ViewSpotLink>
-                  </ReviewCard>
-                ))}
-              </ReviewsList>
-            ) : (
-              <EmptyState>You haven't written any reviews yet.</EmptyState>
-            )}
-          </ProfileSection>
-        )}
-        
-        {activeTab === 'saved' && (
-          <ProfileSection>
-            <SectionTitle>Saved Spots</SectionTitle>
-            <EmptyState>
-              Saved spots feature coming soon!
-            </EmptyState>
-          </ProfileSection>
-        )}
       </ProfileContainer>
     </Layout>
   );
@@ -321,12 +259,34 @@ const LoadingMessage = styled.div`
   color: #666;
 `;
 
+const LinkContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+`;
+
+const LinkButton = styled.button`
+  padding: 0.75rem 1rem;
+  background-color: var(--light-background);
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+`;
+
 const EmptyState = styled.div`
   text-align: center;
-  padding: 3rem;
-  background-color: white;
+  padding: 2rem;
+  background-color: var(--light-background);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   color: #666;
 `;
 
